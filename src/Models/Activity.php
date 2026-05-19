@@ -42,7 +42,8 @@ class Activity extends Model
                             'filament-model-activity-page.can_see_internal_callback',
                             fn () => false
                         );
-                        if (! $canSeeInternal()) {
+                        $result = is_callable($canSeeInternal) ? $canSeeInternal() : (bool) $canSeeInternal;
+                        if (! $result) {
                             $query->where('level', 'NOT LIKE', '%internal%');
                         }
                     } else {
