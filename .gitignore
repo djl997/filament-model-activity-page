@@ -1,0 +1,8 @@
+/vendor/
+/node_modules/
+/.phpunit.cache/
+/.pest/
+/coverage/
+composer.lock
+.env
+.phpunit.result.cache
