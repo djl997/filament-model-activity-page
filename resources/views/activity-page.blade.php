@@ -33,19 +33,16 @@
                                             $isInternal = $message['is_internal'];
                                             $icon = $message['icon'] ?? null;
                                         @endphp
-                                        <div @class([
-                                            'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs max-w-[80%] wrap-break-word text-center',
-                                            'bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400' => $isInternal,
-                                            'bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300' => ! $isInternal,
-                                        ])>
-                                            @if ($icon)
-                                                <x-filament::icon :icon="$icon" class="size-3 shrink-0" />
-                                            @endif
+                                        <x-filament::badge
+                                            :color="$isInternal ? 'gray' : 'primary'"
+                                            :icon="$icon"
+                                            size="sm"
+                                        >
                                             @if (! empty($message['context']))
-                                                <span class="text-[.65rem] font-bold">{{ $message['context'] }}</span><span class="px-1">&middot;</span>
+                                                <span class="font-bold">{{ $message['context'] }}</span><span class="px-1">&middot;</span>
                                             @endif
                                             {{ $message['message'] }}
-                                        </div>
+                                        </x-filament::badge>
                                     @endforeach
                                 </div>
                             @else
