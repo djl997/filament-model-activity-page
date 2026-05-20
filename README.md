@@ -86,10 +86,27 @@ Then rebuild: `npm run build`
 |---|---|---|
 | `getEagerLoadRelations()` | `['activities.user']` | Add extra eager-load chains |
 | `getChatMessages()` | loads `activities` on record | Override to aggregate from related models |
+| `getChildActivities()` | `[]` | Merge activities from child/related models into the feed |
 | `isPrivilegedUser()` | `false` | Bypasses rate limiting |
 | `canSendInternalMessages()` | `false` | Shows the internal checkbox on the compose form |
 | `afterClientMessage(array $data)` | no-op | Send notifications after a client posts |
 | `resolveActivityIcon(array $activity)` | `null` | Return a Heroicon name to show an icon on any activity |
+
+### Aggregating child model activities
+
+Override `getChildActivities()` to pull activities from related (child) models into the same feed. Each entry must have an `activities` key (an iterable of Activity models) and a `context` key (a label shown on each message to indicate its origin).
+
+```php
+protected function getChildActivities(): array
+{
+    return $this->getRecord()->dossiers->map(fn ($dossier) => [
+        'activities' => $dossier->activities,
+        'context'    => $dossier->title,
+    ])->all();
+}
+```
+
+The context label is rendered as a small faded tag next to the message text, so readers can tell which child record the activity belongs to. Activities on the page's own record show no context label.
 
 ### Adding icons to activities
 
