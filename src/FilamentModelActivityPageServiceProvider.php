@@ -15,6 +15,7 @@ class FilamentModelActivityPageServiceProvider extends PackageServiceProvider
             ->name(static::$name)
             ->hasConfigFile()
             ->hasMigration('create_activities_table')
+            ->runsMigrations()
             ->hasTranslations()
             ->hasViews();
     }
