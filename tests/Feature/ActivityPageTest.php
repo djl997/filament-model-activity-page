@@ -188,3 +188,37 @@ it('sendMessage stores chat level even when internal is true but canSendInternal
 
     expect(Activity::withoutGlobalScopes()->first()->level->value)->toBe('chat');
 });
+
+// ---------------------------------------------------------------------------
+// getChildActivities
+// ---------------------------------------------------------------------------
+
+it('getChatMessages merges child activities with context into the feed', function () {
+    $this->post->activities()->withoutGlobalScopes()->create([
+        'user_id' => $this->user->id,
+        'message' => 'Parent message',
+        'level' => 'chat',
+    ]);
+
+    $child = Post::create(['title' => 'Child Post']);
+    $child->activities()->withoutGlobalScopes()->create([
+        'user_id' => $this->user->id,
+        'message' => 'Child message',
+        'level' => 'chat',
+    ]);
+
+    $page = makePage($this->post);
+    $page->childActivityEntries = [
+        ['activities' => $child->activities()->withoutGlobalScopes()->get(), 'context' => 'Child Post'],
+    ];
+
+    $messages = $page->getChatMessages();
+
+    expect($messages)->toHaveCount(2);
+
+    $childMsg = $messages->firstWhere('message', 'Child message');
+    expect($childMsg['context'])->toBe('Child Post');
+
+    $parentMsg = $messages->firstWhere('message', 'Parent message');
+    expect($parentMsg['context'])->toBeNull();
+});

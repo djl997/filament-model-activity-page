@@ -42,6 +42,9 @@
                                                 <x-filament::icon :icon="$icon" class="size-3 shrink-0" />
                                             @endif
                                             {{ $message['message'] }}
+                                            @if (! empty($message['context']))
+                                                <span class="opacity-50 text-[10px] ml-1">[{{ $message['context'] }}]</span>
+                                            @endif
                                         </div>
                                     @endforeach
                                 </div>
@@ -78,6 +81,9 @@
                                                     <x-filament::icon icon="heroicon-m-eye-slash" class="size-3.5 mt-0.5 shrink-0 opacity-60" />
                                                 @endif
                                                 {{ $message['message'] }}
+                                                @if (! empty($message['context']))
+                                                    <span class="opacity-50 text-[10px] ml-1">[{{ $message['context'] }}]</span>
+                                                @endif
                                             </div>
                                         @endforeach
                                     </div>

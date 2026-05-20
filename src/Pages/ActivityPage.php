@@ -107,6 +107,13 @@ abstract class ActivityPage extends Page implements HasForms
             $messages->push($this->formatActivity($activity));
         }
 
+        foreach ($this->getChildActivities() as $entry) {
+            $context = $entry['context'] ?? null;
+            foreach ($entry['activities'] as $activity) {
+                $messages->push($this->formatActivity($activity, $context));
+            }
+        }
+
         return $messages->sortByDesc('timestamp');
     }
 
@@ -222,4 +229,19 @@ abstract class ActivityPage extends Page implements HasForms
 
     /** Called after a non-privileged user sends a message. Override to send notifications. */
     protected function afterClientMessage(array $data): void {}
+
+    /**
+     * Return child activity collections to merge into the feed.
+     * Each entry must have 'activities' (iterable of Activity models) and 'context' (string label).
+     *
+     * Example:
+     *   return $this->getRecord()->dossiers->map(fn ($d) => [
+     *       'activities' => $d->activities,
+     *       'context'    => $d->title,
+     *   ])->all();
+     */
+    protected function getChildActivities(): array
+    {
+        return [];
+    }
 }

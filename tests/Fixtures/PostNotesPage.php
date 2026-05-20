@@ -12,6 +12,8 @@ class PostNotesPage extends ActivityPage
 
     public bool $allowInternal = false;
 
+    public array $childActivityEntries = [];
+
     protected function isPrivilegedUser(): bool
     {
         return $this->privileged;
@@ -20,5 +22,10 @@ class PostNotesPage extends ActivityPage
     protected function canSendInternalMessages(): bool
     {
         return $this->allowInternal;
+    }
+
+    protected function getChildActivities(): array
+    {
+        return $this->childActivityEntries;
     }
 }
