@@ -21,6 +21,7 @@ class ActivityMessage
         public readonly mixed $user_id = null,
         ?Carbon $created_at = null,
         public readonly string $level = 'chat',
+        public readonly bool $is_internal = false,
         public readonly ?string $context = null,
     ) {
         $this->created_at = $created_at ?? now();
@@ -39,6 +40,7 @@ class ActivityMessage
             'by' => $this->by,
             'by_user' => $this->by_user,
             'level' => $this->level,
+            'is_internal' => $this->is_internal,
             'created_at' => $this->created_at->toString(),
             'date' => $this->date,
             'time' => $this->created_at->timestamp,

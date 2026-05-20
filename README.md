@@ -87,8 +87,27 @@ Then rebuild: `npm run build`
 | `getEagerLoadRelations()` | `['activities.user']` | Add extra eager-load chains |
 | `getChatMessages()` | loads `activities` on record | Override to aggregate from related models |
 | `isPrivilegedUser()` | `false` | Bypasses rate limiting |
-| `canSendInternalMessages()` | `false` | Shows the internal-note checkbox |
+| `canSendInternalMessages()` | `false` | Shows the internal checkbox on the compose form |
 | `afterClientMessage(array $data)` | no-op | Send notifications after a client posts |
+| `resolveActivityIcon(array $activity)` | `null` | Return a Heroicon name to show an icon on any activity |
+
+### Adding icons to activities
+
+Override `resolveActivityIcon()` in your page class to return a Heroicon name for a given activity. The `$activity` array contains all formatted fields including `level`, `is_internal`, `message`, etc.
+
+```php
+protected function resolveActivityIcon(array $activity): ?string
+{
+    // Show an envelope icon on event activities that contain "email" in the message
+    if ($activity['level'] === 'event' && str_contains($activity['message'], 'email')) {
+        return 'heroicon-m-envelope';
+    }
+
+    return null;
+}
+```
+
+Icons are rendered on info-bar (Event) activities only. Chat bubbles do not show icons.
 
 ## Configuration
 
@@ -105,7 +124,7 @@ return [
 
     'internal_scope_callback' => function (\Illuminate\Database\Eloquent\Builder $query) {
         if (auth()->check() && ! auth()->user()->isAdmin()) {
-            $query->where('level', 'NOT LIKE', '%internal%');
+            $query->where('is_internal', false);
         }
     },
 ];

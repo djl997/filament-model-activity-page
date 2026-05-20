@@ -13,6 +13,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->text('message');
             $table->string('level')->default('chat');
+            $table->boolean('is_internal')->default(false);
             $table->morphs('activitable');
             $table->timestamp('created_at')->useCurrent();
         });

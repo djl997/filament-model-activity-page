@@ -64,12 +64,12 @@ abstract class ActivityPage extends Page implements HasForms
         $data = $this->form->getState();
 
         $isInternal = ($data['internal'] ?? false) && $this->canSendInternalMessages();
-        $level = $isInternal ? 'internal_note' : 'chat';
 
         $this->getRecord()->activities()->create([
             'user_id' => auth()->id(),
             'message' => $data['message'],
-            'level' => $level,
+            'level' => 'chat',
+            'is_internal' => $isInternal,
         ]);
 
         if (! $this->isPrivilegedUser()) {
@@ -128,7 +128,7 @@ abstract class ActivityPage extends Page implements HasForms
             $currentGroup = null;
 
             foreach ($dayMessages as $message) {
-                $isInfo = in_array($message['level'], ['info', 'internal_info', 'email', 'internal_email']);
+                $isInfo = $message['level'] === 'event';
                 $groupKey = $isInfo ? '__info__' : ($message['by_current_user'] ? '__mine__' : $message['author']);
 
                 if ($currentGroup === null || $currentGroup['key'] !== $groupKey || $isInfo || $currentGroup['is_info']) {
@@ -164,9 +164,8 @@ abstract class ActivityPage extends Page implements HasForms
     protected function formatActivity(\Illuminate\Database\Eloquent\Model $activity, ?string $context = null): array
     {
         $level = $activity->level instanceof \BackedEnum ? $activity->level->value : ($activity->level ?? '');
-        $isInternal = str_contains($level, 'internal');
 
-        return [
+        $formatted = [
             'id' => $activity->id,
             'message' => $activity->message,
             'author' => optional($activity->user)->name ?? __('filament-model-activity-page::activity-page.system_author'),
@@ -175,10 +174,20 @@ abstract class ActivityPage extends Page implements HasForms
             'date' => $activity->created_at?->format('d-m-Y H:i'),
             'date_only' => $activity->created_at?->format('d-m-Y'),
             'time' => $activity->created_at?->format('H:i'),
-            'is_internal' => $isInternal,
+            'is_internal' => (bool) $activity->is_internal,
             'context' => $context,
             'level' => $level,
         ];
+
+        $formatted['icon'] = $this->resolveActivityIcon($formatted);
+
+        return $formatted;
+    }
+
+    /** Override to return a Heroicon name for a given activity, or null for no icon. */
+    protected function resolveActivityIcon(array $activity): ?string
+    {
+        return null;
     }
 
     protected function getHeaderActions(): array

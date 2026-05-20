@@ -18,6 +18,7 @@ class Activity extends Model
         'user_id',
         'message',
         'level',
+        'is_internal',
         'activitable_id',
         'activitable_type',
         'created_at',
@@ -26,6 +27,7 @@ class Activity extends Model
     protected $casts = [
         'created_at' => 'datetime',
         'level' => ActivityLevel::class,
+        'is_internal' => 'boolean',
     ];
 
     protected static function booted(): void
@@ -44,10 +46,10 @@ class Activity extends Model
                         );
                         $result = is_callable($canSeeInternal) ? $canSeeInternal() : (bool) $canSeeInternal;
                         if (! $result) {
-                            $query->where('level', 'NOT LIKE', '%internal%');
+                            $query->where('is_internal', false);
                         }
                     } else {
-                        $query->where('level', 'NOT LIKE', '%internal%');
+                        $query->where('is_internal', false);
                     }
                 });
             }

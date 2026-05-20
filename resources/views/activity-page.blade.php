@@ -31,12 +31,7 @@
                                     @foreach ($group['messages'] as $message)
                                         @php
                                             $isInternal = $message['is_internal'];
-                                            $icon = match ($message['level']) {
-                                                'internal_email' => 'heroicon-m-envelope',
-                                                'email'          => 'heroicon-m-envelope',
-                                                'internal_info'  => 'heroicon-m-information-circle',
-                                                default          => null,
-                                            };
+                                            $icon = $message['icon'] ?? null;
                                         @endphp
                                         <div @class([
                                             'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs max-w-[80%] wrap-break-word text-center',
