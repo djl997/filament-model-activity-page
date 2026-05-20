@@ -41,10 +41,10 @@
                                             @if ($icon)
                                                 <x-filament::icon :icon="$icon" class="size-3 shrink-0" />
                                             @endif
-                                            {{ $message['message'] }}
                                             @if (! empty($message['context']))
-                                                <span class="opacity-50 text-[10px] ml-1">[{{ $message['context'] }}]</span>
+                                                <span class="text-[.65rem] font-bold">{{ $message['context'] }}</span><span class="px-1">&middot;</span>
                                             @endif
+                                            {{ $message['message'] }}
                                         </div>
                                     @endforeach
                                 </div>
