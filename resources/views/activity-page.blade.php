@@ -31,7 +31,7 @@
                                     @foreach ($group['messages'] as $message)
                                         @php
                                             $isInternal = $message['is_internal'];
-                                            $icon = $message['icon'] ?? null;
+                                            $icon = $message['icon'] ?? ($message['is_internal'] ? 'heroicon-m-eye-slash' : null);
                                         @endphp
                                         <x-filament::badge
                                             :color="$isInternal ? 'gray' : 'primary'"
